@@ -286,9 +286,9 @@ const WheelOfFortune = memo(({address}: { address: string | null }) => {
 
         await to_transferPrize(address, prizeAmount, prizeResult)
     };
-    const to_trans = async () => {
-        await to_transferPrize(typeof address === "string" ? address : '123', 0.01, '0.01 MON')
-    }
+    // const to_trans = async () => {
+    //     await to_transferPrize(typeof address === "string" ? address : '123', 0.01, '0.01 MON')
+    // }
 
     const generateUniqueId = () => {
         return new Date().toISOString();  // 使用当前时间戳作为唯一ID
@@ -322,10 +322,13 @@ const WheelOfFortune = memo(({address}: { address: string | null }) => {
             const receipt = await transferPrize(address, prizeAmount);
 
             // 如果转账成功，更新中奖记录为已兑奖，并记录转账哈希
+            // @ts-ignore
+            // @ts-ignore
             const updatedRecord: PrizeRecord = {
                 ...record,                  // 保留原始的中奖记录
                 isClaimed: true,            // 标记已兑奖
                 claimTimestamp: new Date().toLocaleString(),  // 设置兑奖时间为当前时间
+                // @ts-ignore
                 claimTxHash: receipt,  // 存储转账的哈希值
             };
 

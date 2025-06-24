@@ -16,8 +16,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             sessionParams={{
                 appId: 'io.local.ai-chat',
                 apiKey: '2WZlojthZ18mcxFxH7BqwJ19HqsMhSfSjTLwPUVfkq',
-                name: 'localho122',
-                password: 'leil32',
+                name: 'localho12212212',
+                password: 'leil1232',
             }}
         >
             <App/>
