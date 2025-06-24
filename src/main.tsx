@@ -14,10 +14,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <ReactTogether
             sessionParams={{
-                appId: 'https://crypto-wheel-beryl.vercel.app/',
+                appId: 'crypto-wheel-beryl.vercel.app',
                 apiKey: '2WZlojthZ18mcxFxH7BqwJ19HqsMhSfSjTLwPUVfkq',
-                name: 'berylvercel',
-                password: 'xiangxiang',
+                name: 'wheelberylvercel',
+                password: 'cryptowheel',
             }}
         >
             <App/>
