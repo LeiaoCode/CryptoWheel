@@ -324,6 +324,7 @@ const WheelOfFortune = memo(({address}: { address: string | null }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     winnerAddress: address,
                     prizeAmount: prizeAmount,
