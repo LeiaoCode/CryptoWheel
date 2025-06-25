@@ -239,13 +239,19 @@ const WheelOfFortune = memo(({address}: { address: string | null }) => {
     // 动态生成奖项并与奖池关联，确保奖项总金额不超过 5 MON
     const generatePrizes = (maxPrizeAmount: number) => {
         const percentages = [0.05, 0.10, 0.20, 0.25, 0.20, 0.20];  // 设定6个奖项的百分比
-        const prizes = percentages.map(percentage => {
+        const colors = ["#677d41", "#b8c5f2", "#a7d8d0", "#f2b8c5", "#f8e0a4", "#e4e4f1"];  // 设置不同的背景颜色数组
+        const prizes = percentages.map((percentage, index) => {
             // 计算每个奖项金额
             const prizeAmount = percentage * maxPrizeAmount;
-            return {background: "#e9e8fe", fonts: [{text: `${prizeAmount.toFixed(2)} MON`}]};
+            return {
+                background: colors[index],  // 动态分配背景颜色
+                fonts: [{ text: `${prizeAmount.toFixed(2)} MON` }]
+            };
         });
+        console.log('prizes', prizes);
         return prizes;
     };
+
 
     // 计算支付金额，支付金额为三分之一奖池的六份的中间值
     const calculatePaymentAmount = () => {
@@ -442,33 +448,42 @@ const WheelOfFortune = memo(({address}: { address: string | null }) => {
                         }
                     ]}
                     prizes={generatePrizes(poolBalance / 3)}
+                    // buttons={[
+                    //     {radius: "50%", background: "#617df2"},
+                    //     {radius: "40%", background: "#617df2"},
+                    //     {radius: "35%", background: "#afc8ff"},
+                    //     {radius: "30%", background: "#869cfa", pointer: true, fonts: [{text: "抽奖", top: "-10px"}]},
+                    // ]}
                     buttons={[
-                        {radius: "50%", background: "#617df2"},
-                        {radius: "40%", background: "#617df2"},
-                        {radius: "35%", background: "#afc8ff"},
-                        {radius: "30%", background: "#869cfa", pointer: true, fonts: [{text: "抽奖", top: "-10px"}]},
+                        { radius: '40%', background: '#617df2' },
+                        { radius: '35%', background: '#afc8ff' },
+                        {
+                            radius: '30%', background: '#869cfa',
+                            pointer: true,
+                            fonts: [{ text: '开始', top: '-10px' }]
+                        }
                     ]}
                     onStart={() => {
                         message.warning("支付成功之后自动抽奖");
                     }}
                     onEnd={(prize: any) => spinWheelSave(prize)}
-                    style={{
-                        borderRadius: "50%",
-                        boxShadow: "0 6px 20px rgba(0, 0, 0, 0.3)",  // 强化阴影效果
-                        background: "linear-gradient(135deg, #ff5f6d, #ffc3a0)",  // 转盘渐变背景
-                        border: "4px solid #fff",
-                        display: "flex",
-                        justifyContent: "center",  // 确保转盘居中
-                        alignItems: "center",  // 确保转盘内容居中
-                    }}
-                    prizeStyle={{
-                        fontSize: "16px",  // 调整字体大小
-                        fontWeight: "bold", // 调整字体粗细
-                        color: "#fff",  // 奖项字体颜色
-                        textAlign: "center",  // 奖项内容居中显示
-                        marginTop: "0",  // 调整奖项与转盘中心的距离
-                        textShadow: "0 0 10px rgba(255, 255, 255, 0.8)"  // 文字阴影效果
-                    }}
+                    // style={{
+                    //     borderRadius: "50%",
+                    //     boxShadow: "0 6px 20px rgba(0, 0, 0, 0.3)",  // 强化阴影效果
+                    //     background: "linear-gradient(135deg, #ff5f6d, #ffc3a0)",  // 转盘渐变背景
+                    //     border: "4px solid #fff",
+                    //     display: "flex",
+                    //     justifyContent: "center",  // 确保转盘居中
+                    //     alignItems: "center",  // 确保转盘内容居中
+                    // }}
+                    // prizeStyle={{
+                    //     fontSize: "16px",  // 调整字体大小
+                    //     fontWeight: "bold", // 调整字体粗细
+                    //     color: "#fff",  // 奖项字体颜色
+                    //     textAlign: "center",  // 奖项内容居中显示
+                    //     marginTop: "10",  // 调整奖项与转盘中心的距离
+                    //     textShadow: "0 0 10px rgba(255, 255, 255, 0.8)"  // 文字阴影效果
+                    // }}
                 />
             </div>
             {/*<div>*/}
