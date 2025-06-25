@@ -24,7 +24,7 @@ import {useStateTogether} from "react-together";
 import {LuckyWheel} from '@lucky-canvas/react'
 import "./ChatPanel.css";
 import {parseEther} from "viem";
-import {getPoolBalance, transferPrize} from "./transferPrize";
+import {getPoolBalance} from "./transferPrize";
 
 const MONAD_CHAIN = {
     id: 10143,
@@ -318,33 +318,50 @@ const WheelOfFortune = memo(({address}: { address: string | null }) => {
         setLatestPrizes((prev: PrizeRecord[]) => [record, ...prev]);
 
         try {
-            // 调用 transferPrize 函数进行转账
-            const receipt = await transferPrize(address, prizeAmount);
+            // 使用 fetch 发起 HTTP 请求，调用 Vercel 部署的 API
+            const response = await fetch('https://crypto-wheel-backend.vercel.app/api/transferPrize', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    winnerAddress: address,
+                    prizeAmount: prizeAmount,
+                }),
+            });
+            // 如果请求成功，解析 JSON 响应
+            const result = await response.json();
 
-            // 如果转账成功，更新中奖记录为已兑奖，并记录转账哈希
-            // @ts-ignore
-            // @ts-ignore
-            const updatedRecord: PrizeRecord = {
-                ...record,                  // 保留原始的中奖记录
-                isClaimed: true,            // 标记已兑奖
-                claimTimestamp: new Date().toLocaleString(),  // 设置兑奖时间为当前时间
-                // @ts-ignore
-                claimTxHash: receipt,  // 存储转账的哈希值
-            };
+            if (result.success) {
+                const receipt = result.transactionHash;  // 获取交易哈希
 
-            // 根据唯一ID更新中奖记录
-            setLatestPrizes((prev: PrizeRecord[]) =>
-                prev.map(item => item.id === id ? updatedRecord : item)
-            );
+                // 如果转账成功，更新中奖记录为已兑奖，并记录转账哈希
+                const updatedRecord: PrizeRecord = {
+                    ...record,                  // 保留原始的中奖记录
+                    isClaimed: true,            // 标记已兑奖
+                    claimTimestamp: new Date().toLocaleString(),  // 设置兑奖时间为当前时间
+                    claimTxHash: receipt,  // 存储转账的哈希值
+                };
+
+                // 根据唯一ID更新中奖记录
+                setLatestPrizes((prev: PrizeRecord[]) =>
+                    prev.map(item => item.id === id ? updatedRecord : item)
+                );
+
+                message.success('自动兑换奖金成功');
+            } else {
+                // 处理转账失败的情况
+                console.error(`转账失败: ${result.message}`);
+            }
 
         } catch (error) {
             // 处理转账失败的情况
             console.error("转账失败", error);
-            message.error("转账失败，请重试");
+            console.error("转账失败，请重试");
         } finally {
             const balance = await getPoolBalance();
             setPoolBalance(balance);
-            message.success('请求去中心化数据成功!');
+            message.success('刷新去中心化数据成功!');
         }
     };
     // 播放音效
