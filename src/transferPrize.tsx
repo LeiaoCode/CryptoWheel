@@ -1,6 +1,5 @@
 // @ts-ignore
 import Web3 from 'web3';
-import {message} from 'antd';
 
 const MONAD_CHAIN = {
     id: 10143,
