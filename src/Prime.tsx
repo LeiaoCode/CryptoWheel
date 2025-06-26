@@ -407,7 +407,7 @@ const WheelOfFortune = memo(({address}: { address: string | null }) => {
                 color: "#fff",
                 fontWeight: "bold"
             }}>
-                当前奖池: {poolBalance.toFixed(2)} MON
+                当前奖池: {(poolBalance && !isNaN(poolBalance)) ? poolBalance.toFixed(2) : "0.00"} MON
             </div>
 
             {/* 音频文件 */}
