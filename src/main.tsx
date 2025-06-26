@@ -16,8 +16,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             sessionParams={{
                 appId: 'crypto-wheel-beryl.vercel.app',
                 apiKey: '2YD0NnnM6AxmR9RR6kLiIC8swku4KmUTDNuICM5c71',
-                name: 'xiang',
-                password: 'leiao',
+                name: 'xiangLeo',
+                password: 'LeAao',
             }}
         >
             <App/>
