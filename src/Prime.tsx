@@ -151,7 +151,7 @@ const WheelOfFortune = memo(({address}: { address: string | null }) => {
     useEffect(() => {
         console.log('获取奖池余额并设置状态')
 
-        const new_prize = generatePrizes(poolBalance / 3);
+        const new_prize = generatePrizes(poolBalance / 2);
         setPrize(new_prize)
 
         const fetchPoolBalance = async () => {
@@ -166,6 +166,7 @@ const WheelOfFortune = memo(({address}: { address: string | null }) => {
     // 转盘数据变化则更新购票金额
     useEffect(() => {
         const paymentAmount = calculatePaymentAmount();
+        // @ts-ignore
         setTicketPrice(paymentAmount)
     }, [prize]);
 
@@ -238,14 +239,14 @@ const WheelOfFortune = memo(({address}: { address: string | null }) => {
 
     // 动态生成奖项并与奖池关联，确保奖项总金额不超过 5 MON
     const generatePrizes = (maxPrizeAmount: number) => {
-        const percentages = [0.05, 0.10, 0.20, 0.25, 0.20, 0.20];  // 设定6个奖项的百分比
+        const percentages = [0.05, 0.08, 0.10, 0.30, 0.25, 0.22]; // 调整后的百分比
         const colors = ["#677d41", "#b8c5f2", "#a7d8d0", "#f2b8c5", "#f8e0a4", "#e4e4f1"];  // 设置不同的背景颜色数组
         const prizes = percentages.map((percentage, index) => {
             // 计算每个奖项金额
             const prizeAmount = percentage * maxPrizeAmount;
             return {
                 background: colors[index],  // 动态分配背景颜色
-                fonts: [{ text: `${prizeAmount.toFixed(2)} MON` }]
+                fonts: [{text: `${prizeAmount.toFixed(2)} MON`}]
             };
         });
         console.log('prizes', prizes);
@@ -260,7 +261,7 @@ const WheelOfFortune = memo(({address}: { address: string | null }) => {
         prizes.sort((a, b) => parseFloat(a.fonts[0].text) - parseFloat(b.fonts[0].text));  // 按金额排序
         // 获取第3个和第4个奖项的平均值作为支付金额
         const paymentAmount = (parseFloat(prizes[2].fonts[0].text) + parseFloat(prizes[3].fonts[0].text)) / 2;
-        return paymentAmount;
+        return paymentAmount.toFixed(2);
     };
 
 
@@ -437,7 +438,6 @@ const WheelOfFortune = memo(({address}: { address: string | null }) => {
                     ref={myLucky}
                     width="400px"
                     height="300px"
-                    // blocks={[{padding: "10px", background: "#869cfa"}]}
                     blocks={[
                         {
                             padding: "12px",
@@ -447,53 +447,22 @@ const WheelOfFortune = memo(({address}: { address: string | null }) => {
                             transform: "scale(0.95)", // 缩小转盘大小，让奖项更集中
                         }
                     ]}
-                    prizes={generatePrizes(poolBalance / 3)}
-                    // buttons={[
-                    //     {radius: "50%", background: "#617df2"},
-                    //     {radius: "40%", background: "#617df2"},
-                    //     {radius: "35%", background: "#afc8ff"},
-                    //     {radius: "30%", background: "#869cfa", pointer: true, fonts: [{text: "抽奖", top: "-10px"}]},
-                    // ]}
+                    prizes={generatePrizes(poolBalance / 2)}
                     buttons={[
-                        { radius: '40%', background: '#617df2' },
-                        { radius: '35%', background: '#afc8ff' },
+                        {radius: '40%', background: '#617df2'},
+                        {radius: '35%', background: '#afc8ff'},
                         {
                             radius: '30%', background: '#869cfa',
                             pointer: true,
-                            fonts: [{ text: '开始', top: '-10px' }]
+                            fonts: [{text: '开始', top: '-10px'}]
                         }
                     ]}
                     onStart={() => {
                         message.warning("支付成功之后自动抽奖");
                     }}
                     onEnd={(prize: any) => spinWheelSave(prize)}
-                    // style={{
-                    //     borderRadius: "50%",
-                    //     boxShadow: "0 6px 20px rgba(0, 0, 0, 0.3)",  // 强化阴影效果
-                    //     background: "linear-gradient(135deg, #ff5f6d, #ffc3a0)",  // 转盘渐变背景
-                    //     border: "4px solid #fff",
-                    //     display: "flex",
-                    //     justifyContent: "center",  // 确保转盘居中
-                    //     alignItems: "center",  // 确保转盘内容居中
-                    // }}
-                    // prizeStyle={{
-                    //     fontSize: "16px",  // 调整字体大小
-                    //     fontWeight: "bold", // 调整字体粗细
-                    //     color: "#fff",  // 奖项字体颜色
-                    //     textAlign: "center",  // 奖项内容居中显示
-                    //     marginTop: "10",  // 调整奖项与转盘中心的距离
-                    //     textShadow: "0 0 10px rgba(255, 255, 255, 0.8)"  // 文字阴影效果
-                    // }}
                 />
             </div>
-            {/*<div>*/}
-            {/*    <Button*/}
-            {/*        type="primary"*/}
-            {/*        onClick={to_trans}*/}
-            {/*    >*/}
-            {/*        发送*/}
-            {/*    </Button>*/}
-            {/*</div>*/}
 
             <Divider plain style={{borderColor: "rgba(255, 255, 255, 0.3)", margin: "20px 0"}}/>
 
@@ -729,15 +698,16 @@ const DecentralizedLotteryExplanation = () => {
 
                 <p><strong>2. 支付金额计算</strong></p>
                 <p>
-                    - 每次参与抽奖时，系统会动态计算用户需要支付的金额。支付金额是基于 【奖池的三分之一金额】
+                    - 每次参与抽奖时，系统会动态计算用户需要支付的金额。支付金额是基于 【奖池的二分之一金额】
                     来计算的，确保支付金额处于公平范围。
                     - 支付金额会根据奖池的变化而 【动态调整】。
                 </p>
 
                 <p><strong>3. 奖池机制</strong></p>
                 <p>
-                    - 奖池的初始金额为 【30 MON】，每次用户支付的金额会 【增加奖池】，奖池越大，奖励金额越高。
-                    - 奖池中的 【三分之一金额】 将作为本次抽奖的总奖励，分配为 6 个奖项，每个奖项的金额按比例分配。
+                    - 每次用户支付的金额会 【增加奖池】，奖池越大，奖励金额越高。
+                    - 奖池中的 【二分之一金额】 将作为本次抽奖的总奖励，分配为 6 个奖项，每个奖项的金额按比例[0.05, 0.08,
+                    0.10, 0.30, 0.25, 0.22]分配。
                 </p>
 
                 <p><strong>4. 抽奖机制</strong></p>
